@@ -1,0 +1,140 @@
+server:
+  port: 8080
+---
+spring:
+
+  cloud:
+#    globalcors:
+#      cors-configurations:
+#        '[/**]':
+#          allowedOrigins: "https://front-end-domain.com"
+#          allowedMethods:
+#            - GET
+#            - POST
+#    default-filters:
+#      - DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Credentials
+
+    gateway:
+      default-filters:
+        - DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Credentials, RETAIN_UNIQUE
+#        - name: GlobalFilter
+#          args:
+#            baseMessage: Spring Cloud Gateway GlobalFilter
+#            preLogger: true
+#            postLogger: true
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins: "http://localhost:3000"
+            allow-credentials: true
+            allowedHeaders: "*"
+            allowedMethods: "*"
+      routes:
+        - id: user-command
+          uri: http://localhost:8081/
+#          uri: http://host.docker.internal:8081/
+          predicates:
+            - Path=/v1/users/**
+            - Method=POST,PUT,DELETE,PATCH
+          filters:
+#            - AuthorizationHeaderFilter
+        #            - name: CudFilter
+        #              args:
+        #                baseMessage: Spring Cloud Gateway UserFilter
+        #                preLogger: true
+        #                postLogger: true
+        - id: user-query
+          uri: http://localhost:3001/
+#          uri: http://host.docker.internal:8082/
+          predicates:
+            - Path=/v1/users/**
+            - Method=GET
+          filters:
+#            - AuthorizationHeaderFilter
+#            - name: RFilter
+#              args:
+#                baseMessage: Spring Cloud Gateway CafeFilter
+#                preLogger: true
+#                postLogger: true
+        - id: user-authorization
+          uri: http://localhost:8081/
+          predicates:
+            - Path=/v1/auth/**
+        - id: resume-command
+          uri: http://localhost:8082/
+          predicates:
+            - Path=/v1/resumes/**
+            - Method=POST,PUT,DELETE,PATCH
+          filters:
+#            - AuthorizationHeaderFilter
+        - id: resume-query
+          uri: http://localhost:3002/
+          predicates:
+            - Path=/v1/resumes/**
+            - Method=GET
+          filters:
+#            - AuthorizationHeaderFilter
+        - id: introduction-command
+          uri: http://localhost:8083/
+          predicates:
+            - Path=/v1/introductions/**
+            - Method=POST,PUT,DELETE,PATCH
+          filters:
+#            - AuthorizationHeaderFilter
+        - id: introduction-query
+          uri: http://localhost:3003/
+          predicates:
+            - Path=/v1/introductions/**
+            - Method=GET
+          filters:
+#            - AuthorizationHeaderFilter
+        - id: jobVacancy-command
+          uri: http://localhost:8084/
+          predicates:
+            - Path=/v1/job-vacancies/**
+            - Method=POST,PUT,DELETE,PATCH
+          filters:
+#            - AuthorizationHeaderFilter
+        - id: jobVacancy-query
+          uri: http://localhost:3004/
+          predicates:
+            - Path=/v1/job-vacancies/**
+            - Method=GET
+          filters:
+#            - AuthorizationHeaderFilter
+        - id: apply-command
+          uri: http://localhost:8085/
+          predicates:
+            - Path=/v1/applies/**
+            - Method=POST,PUT,DELETE,PATCH
+#          filters:
+#            - AuthorizationHeaderFilter
+        - id: apply-query
+          uri: http://localhost:3005/
+          predicates:
+            - Path=/v1/applies/**
+            - Method=GET
+#          filters:
+#            - AuthorizationHeaderFilter
+        - id: interview-command
+          uri: http://localhost:8086/
+          predicates:
+            - Path=/v1/interviews/**
+            - Method=POST,PUT,DELETE,PATCH
+#          filters:
+#            - AuthorizationHeaderFilter
+        - id: interview-query
+          uri: http://localhost:3006/
+          predicates:
+            - Path=/v1/interviews/**
+            - Method=GET
+#          filters:
+#            - AuthorizationHeaderFilter
+
+
+jwt:
+  secret: alesdfjalwasdfdsflasgpa;sd[rekgjirjgoaiszjreqaosdghjshuihuag
+
+#kafka:
+#  topics:
+#    users: users

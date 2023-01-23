@@ -1,0 +1,39 @@
+# https://docs.docker.com/compose/compose-file/
+version: "3.3"
+
+services:
+  db_master4:
+    image: mariadb:10.6.3-focal
+    container_name: db_master4
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD_FILE: /run/secrets/mariadb_root_password
+    volumes:
+      - ./master/data:/var/lib/mysql
+      - ./master/config/:/etc/mysql/conf.d
+      - ./master/mysql-init-files/:/docker-entrypoint-initdb.d/
+    ports:
+      - "33309:3306"
+    secrets:
+      - mariadb_root_password
+
+  db_slave4:
+    image: mariadb:10.6.3-focal
+    container_name: db_slave4
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD_FILE: /run/secrets/mariadb_root_password
+    volumes:
+      - ./slave/data:/var/lib/mysql
+      - ./slave/config/:/etc/mysql/conf.d
+      - ./slave/mysql-init-files/:/docker-entrypoint-initdb.d/
+    ports:
+      - "43309:3306"
+    secrets:
+      - mariadb_root_password
+    depends_on:
+      - db_master4
+    
+secrets:
+  mariadb_root_password:
+    file: mariadb_root_password.txt
